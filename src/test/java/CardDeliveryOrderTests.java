@@ -33,7 +33,7 @@ class CardDeliveryOrderTests {
 
     @CsvFileSource(resources = "/cardDeliveryOrderTestInvalidName", numLinesToSkip = 1)
     @ParameterizedTest
-    void shouldDeclineRequestForInvalidName(String town, String name, String tel){
+    void shouldDeclineRequestForInvalidName(String town, String name, String tel) {
         open(url);
         $("[placeholder = 'Город']").setValue(town);
         SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
@@ -49,7 +49,7 @@ class CardDeliveryOrderTests {
 
     @CsvFileSource(resources = "/cardDeliveryOrderTestInvalidTel", numLinesToSkip = 1)
     @ParameterizedTest
-    void shouldDeclineRequestForInvalidTel(String town, String name, String tel){
+    void shouldDeclineRequestForInvalidTel(String town, String name, String tel) {
         open(url);
         $("[placeholder = 'Город']").setValue(town);
         SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
@@ -109,7 +109,7 @@ class CardDeliveryOrderTests {
     }
 
     @Test
-    void shouldDeclineRequestForNotCheckedCheckbox(){
+    void shouldDeclineRequestForNotCheckedCheckbox() {
         open(url);
         $("[placeholder = 'Город']").setValue("Москва");
         SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
@@ -123,4 +123,65 @@ class CardDeliveryOrderTests {
                 .getCssValue("color");
         assertEquals(colorRedRGB, actualColor);
     }
+
+    @Test
+    void shouldDeclineRequestForNullCity() {
+        open(url);
+        $("[placeholder = 'Город']").setValue(null);
+        SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
+        dateWebElement.setValue("\b\b\b\b\b\b\b\b\b\b");
+        dateWebElement.setValue(validDayOfMeeting);
+        $("[name='name']").setValue("Костя Воронин");
+        $("[name='phone']").setValue("+79215683733");
+        $(".checkbox__box").click();
+        $(new Selectors.ByText("Забронировать")).click();
+        $("[data-test-id='city'] .input__sub").shouldHave(Condition
+                .exactText("Поле обязательно для заполнения"));
+    }
+
+    @Test
+    void shouldDeclineRequestForNullName() {
+        open(url);
+        $("[placeholder = 'Город']").setValue("Москва");
+        SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
+        dateWebElement.setValue("\b\b\b\b\b\b\b\b\b\b");
+        dateWebElement.setValue(validDayOfMeeting);
+        $("[name='name']").setValue(null);
+        $("[name='phone']").setValue("+79215683733");
+        $(".checkbox__box").click();
+        $(new Selectors.ByText("Забронировать")).click();
+        $("[data-test-id='name'] .input__sub").shouldHave(Condition
+                .exactText("Поле обязательно для заполнения"));
+    }
+
+    @Test
+    void shouldDeclineRequestForNullDate() {
+        open(url);
+        $("[placeholder = 'Город']").setValue("Москва");
+        SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
+        dateWebElement.setValue("\b\b\b\b\b\b\b\b\b\b");
+        dateWebElement.setValue(null);
+        $("[name='name']").setValue("Костя Воронин");
+        $("[name='phone']").setValue("+79215683733");
+        $(".checkbox__box").click();
+        $(new Selectors.ByText("Забронировать")).click();
+        $(new Selectors.ByText("Неверно введена дата"))
+                .shouldHave(Condition.exactText("Неверно введена дата"));
+    }
+
+    @Test
+    void shouldDeclineRequestForNullTel() {
+        open(url);
+        $("[placeholder = 'Город']").setValue("Москва");
+        SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
+        dateWebElement.setValue("\b\b\b\b\b\b\b\b\b\b");
+        dateWebElement.setValue(validDayOfMeeting);
+        $("[name='name']").setValue("Костя Воронин");
+        $("[name='phone']").setValue(null);
+        $(".checkbox__box").click();
+        $(new Selectors.ByText("Забронировать")).click();
+        $("[data-test-id='phone'] .input__sub").shouldHave(Condition
+                .exactText("Поле обязательно для заполнения"));
+    }
+
 }
