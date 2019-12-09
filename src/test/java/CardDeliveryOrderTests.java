@@ -119,10 +119,8 @@ class CardDeliveryOrderTests {
         $("[name='phone']").setValue("+79215683733");
         $(new Selectors.ByText("Забронировать")).click();
         final String colorRedRGB = "rgba(255, 92, 92, 1)";
-
         String actualColor = $("[data-test-id='agreement'] .checkbox__text")
                 .getCssValue("color");
-        System.out.println(actualColor);
         assertEquals(colorRedRGB, actualColor);
     }
 }
