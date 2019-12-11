@@ -184,4 +184,18 @@ class CardDeliveryOrderTests {
                 .exactText("Поле обязательно для заполнения"));
     }
 
+    @Test
+    void shouldSubmitRequestWhenCityChosenFromAppearedList(){
+        open(url);
+        $("[placeholder = 'Город']").setValue("Аб");
+        $(".menu-item__control").click();
+        SelenideElement dateWebElement = $("[placeholder = 'Дата встречи']");
+        dateWebElement.setValue("\b\b\b\b\b\b\b\b\b\b");
+        dateWebElement.setValue(validDayOfMeeting);
+        $("[name='name']").setValue("Костя Воронни");
+        $("[name='phone']").setValue("+79215683733");
+        $(".checkbox__box").click();
+        $(new Selectors.ByText("Забронировать")).click();
+        $("[data-test-id='notification']").waitUntil(Condition.visible, 15000);
+    }
 }
